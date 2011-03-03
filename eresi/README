@@ -1,0 +1,33 @@
+The ERESI Reverse Engineering Software Interface is a multi-architecture
+binary analysis framework providing a domain-specific language for reverse
+engineering. ERESI features OS-wide support for analysis, instrumentation, and
+debugging of INTEL, SPARC, MIPS, ALPHA and ARM binary programs. ERESI is
+enhanced for operating systems based on the Executable & Linking Format (ELF)
+such as Linux, *BSD, Solaris, HP-UX, IRIX and BeOS, but it can also debug any
+OS in a virtual machine or emulator via the GDB protocol.
+
+We prone modularity and reuse of code : ERESI allows users to create their own
+project on top of our language interpreter in just a few lines of code. Among
+a lot of other features, the base code can display program graphs on demand
+using its automated flow analysis primitives. Our tools were primarily
+designed for working on hardened or raw systems without symbols, executable
+data segments or native debug API, but we are capable of using this
+information when it is available.
+
+Our projects show how ERESI brings a common ground for different goals:
+* elfsh : An interactive and scriptable static program instrumentation tool
+  for ELF binary files.
+* kernsh: An interactive and scriptable runtime kernel instrumentation tool
+  for code injection, modification and redirection.
+* e2dbg : An interactive and scriptable high-performance userland debugger
+  that works without standard OS debug API (without ptrace).
+* etrace : A scriptable userland tracer that works at full frequency of
+  execution without generating traps.
+* kedbg: A remote kernel debugger with ERESI scripting capabilities interfaced
+  with the GDB server, VMware, Qemu, Boches and OpenOCD (JTAG) via the GDB
+  serial protocol.
+* evarista: A binary program transformer entirely implemented in the ERESI
+  language.
+
+x86_64 support is flaky at best, however, 32bit binary editing on 64bit works
+like a charm ;-)
