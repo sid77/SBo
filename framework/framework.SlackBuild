@@ -97,7 +97,7 @@ echo "Stopping Metasploit Framework PostgreSQL..."
 
 # Move install dir
 mkdir -p $PKG/$BASEINSTDIR
-mv $INSTDIR $PKG/$BASEINSTDIR/
+mv /$INSTDIR $PKG/$BASEINSTDIR/
 
 # Fix init script and move it to the right directory
 # This script is not handled by the uninstaller and the user should not call
