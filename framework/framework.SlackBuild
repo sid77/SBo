@@ -82,30 +82,27 @@ set -e
 rm -rf $PKG
 mkdir -p $TMP $PKG $OUTPUT
 
-# Install Metasploit Framework under /opt/framework-${VRESION}
-mkdir -p $PKG/$INSTDIR
+# Install Metasploit Framework DIRECTLY under /opt/framework-${VRESION} (sorry!)
 echo "Installing the Metasploit Framework..."
 chown root:root $CWD/framework-$VERSION-linux$INSTALLERARCH-full.run
 chmod 755 $CWD/framework-$VERSION-linux$INSTALLERARCH-full.run
 $CWD/framework-$VERSION-linux$INSTALLERARCH-full.run \
   --mode unattended \
   --unattendedmodeui minimal \
-  --postgres_port $PG_PORT \
-  --prefix $PKG/$INSTDIR
+  --postgres_port $PG_PORT
 
 # Stop Metasploit Framework PostgreSQL
 echo "Stopping Metasploit Framework PostgreSQL..."
 /etc/init.d/framework-postgres stop
 
-# Fix prefix
-echo "Fixing prefix inside files..."
-find $PKG -type f -exec sed -i -e s:$PKG::g \{\} \;
+# Move install dir
+mkdir -p $PKG/$BASEINSTDIR
+mv $INSTDIR $PKG/$BASEINSTDIR/
 
 # Fix init script and move it to the right directory
 # This script is not handled by the uninstaller and the user should not call
 # the uninstall script anyway, so no problem if we made it more Slackware-ish
 echo "Fixing Metasploit Framework PostgreSQL init script..."
-sed -i -e "s:$PKG::g" /etc/init.d/framework-postgres
 mkdir -p $PKG/etc/rc.d
 mv /etc/init.d/framework-postgres $PKG/etc/rc.d/rc.framework-postgres.new
 chown root:root $PKG/etc/rc.d/rc.framework-postgres.new
@@ -132,6 +129,6 @@ cat $CWD/slack-desc > $PKG/install/slack-desc
 cat $CWD/doinst.sh > $PKG/install/doinst.sh
 
 # Do NOT chown -R root:root or it will bork the shipped PostgreSQL
-# installation, the installer should have taken care of permissions
+# installation: the bitrock installer should have taken care of permissions
 cd $PKG
 /sbin/makepkg -l y -c n $OUTPUT/$PRGNAM-$VERSION-$ARCH-$BUILD$TAG.${PKGTYPE:-tgz}
