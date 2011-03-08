@@ -51,8 +51,5 @@ both as root, before proceeding with the package update.
 Starting with Metasploit Framework 3.6.0, the installation directory changed
 again, this time to /opt/framework-${VERSION}. Unless there will be any other
 changes from upstream, this is a great solution as it will enable seamless
-upgrades between svn and packaged versions, just remember to run:
-
-  # rm -rf /opt/framework-${OLDER_VERSION}
-
-after a successfull run of upgradepkg.
+upgrades between svn and packaged versions, just remember to backup PostgreSQL
+data stored inside "/opt/framework-${OLDER_VERSION}/postgresql/data/".
