@@ -2,7 +2,7 @@
 
 # Slackware build script for Metasploit Framework
 
-# Copyright 2010-2011 Marco Bonetti <sid77@slackware.it>
+# Copyright 2011-2012 Marco Bonetti <sid77@slackware.it>
 # All rights reserved.
 #
 # Redistribution and use of this script, with or without modification, is
@@ -23,7 +23,7 @@
 # ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 
 PRGNAM=framework
-VERSION=${VERSION:-3.5.1}
+VERSION=${VERSION:-3.6.0}
 BUILD=${BUILD:-1}
 TAG=${TAG:-_SBo}
 
@@ -43,14 +43,20 @@ PKG=$TMP/package-$PRGNAM
 OUTPUT=${OUTPUT:-/tmp}
 
 BASEINSTDIR="opt"
-INSTDIR="$BASEINSTDIR/metasploit3"
+INSTDIR="$BASEINSTDIR/framework-${VERSION}"
+
+# On which port is PostgreSQL listening to?
+# Default is 5432, I've changed it to 5433 to not conflict on any existing
+# PostreSQL installation. Set POSTGRESPORT to any other value if you want to
+# customize it.
+POSTGRESPORT=${POSTGRESPORT:-5433}
 
 if [ "$ARCH" = "i486" ]; then
-  INSTALLERARCH="i686"
+  INSTALLERARCH=""
 elif [ "$ARCH" = "i686" ]; then
-  INSTALLERARCH="i686"
+  INSTALLERARCH=""
 elif [ "$ARCH" = "x86_64" ]; then
-  INSTALLERARCH="x86_64"
+  INSTALLERARCH="-x64"
 fi
 
 set -e
@@ -58,13 +64,33 @@ set -e
 rm -rf $PKG
 mkdir -p $TMP $PKG $OUTPUT
 
-# Install the framework under /opt/metasploit3
+# Install the framework under /opt/framework-${VRESION}
 mkdir -p $PKG/$INSTDIR
 echo "Installing the Metasploit Framework..."
-chown root:root $CWD/framework-$VERSION-linux-$INSTALLERARCH.run
-chmod 755 $CWD/framework-$VERSION-linux-$INSTALLERARCH.run
-$CWD/framework-$VERSION-linux-$INSTALLERARCH.run --mode unattended --prefix $PKG/$INSTDIR
+chown root:root $CWD/framework-$VERSION-linux$INSTALLERARCH-full.run
+chmod 755 $CWD/framework-$VERSION-linux$INSTALLERARCH-full.run
+$CWD/framework-$VERSION-linux$INSTALLERARCH-full.run \
+  --mode unattended \
+  --unattendedmodeui minimal \
+  --postgres_port $POSTGRESPORT
+  --prefix $PKG/$INSTDIR
 
+# Stop metasploit framework postgresql
+/etc/init.d/framework-postgres stop
+
+# Fix prefix
+find $PKG -type f -exec sed -i -e s:$PKG::g \{\} \;
+
+# Fix init script and move it to the right directory
+# This script is not handled by the uninstaller and the user should not call
+# the uninstall script anyway, so no problem if we made it more Slackware-ish
+sed -i -e "s:$PKG::g" /etc/init.d/framework-postgres
+mkdir -p $PKG/etc/rc.d
+mv /etc/init.d/framework-postgres $PKG/etc/rc.d/rc.framework-postgres.new
+chown root:root $PKG/etc/rc.d/rc.framework-postgres.new
+chmod 755 $PKG/etc/rc.d/rc.framework-postgres.new
+
+# Install /usr/bin links
 mkdir -p $PKG/usr/bin
 echo "Installing links into /usr/bin..."
 ( cd $PKG/usr/bin
@@ -82,6 +108,7 @@ cat $CWD/$PRGNAM.SlackBuild > $PKG/usr/doc/$PRGNAM-$VERSION/$PRGNAM.SlackBuild
 
 mkdir -p $PKG/install
 cat $CWD/slack-desc > $PKG/install/slack-desc
+cat $CWD/doinst.sh > $PKG/install/doinst.sh
 
 cd $PKG
 chown -R root:root .

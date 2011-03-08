@@ -7,10 +7,44 @@ language and includes components written in C and assembler.
 
 This is just a repackaged version of the installer you get from the Metasploit
 download page. This is an all-in-one installer with Metasploit own versions of
-Ruby, Java and PostgreSQL.
+Ruby, Java and PostgreSQL. Remember to add something like:
+
+  if [ -x /etc/rc.d/rc.framework-postgres ]; then
+    /etc/rc.d/rc.framework-postgres start
+  fi
+
+to /etc/rc.d/rc.local to start the shipped PostgreSQL daemon and something
+like:
+
+  if [ -x /etc/rc.d/rc.framework-postgres ]; then
+    /etc/rc.d/rc.framework-postgres stop
+  fi
+
+to /etc/rc.d/rc.local_shutdown to stop the service.
+I've changed the database default listening port to 5433 in order not to
+conflict with any existing PostgreSQL installation, if you want to use another
+port, just export the POSTGRESPORT variable when running the SlackBuild, like
+this:
+
+  # POSTGRESPORT="5454" ./framework.SalckBuild
 
 An optional cron script to keep the framework up to date is distributed inside
-the /usr/doc/framework-3.5.1 directory. If you use this script, future package
-updates can break your current working copy, tainting the .svn metadata. To
-avoid doing so, just run "removepkg framework" and "rm -rf /opt/metasploit3",
+the /usr/doc/framework-${VERSION} directory and it's called "msfupdate.sh",
+there also is a logrotate config file called "msfupdate.logrotate" which can
+be useful.
+With older version of the framework, if you used the autoupdate script, future
+package updates could break your current working copy, tainting the .svn
+metadata. To avoid doing so, the tip was to run:
+
+  # removepkg framework
+  # rm -rf /opt/metasploit3
+
 both as root, before proceeding with the package update.
+Starting with Metasploit Framework 3.6.0, the installation directory changed
+again, this time to /opt/framework-${VERSION}. Unless there will be any other
+changes from upstream, this is a great solution as it will enable seamless
+upgrades between svn and packaged versions, just remember to run:
+
+  # rm -rf /opt/framework-${OLDER_VERSION}
+
+after a successfull run of upgradepkg.
