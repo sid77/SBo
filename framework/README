@@ -7,8 +7,16 @@ language and includes components written in C and assembler.
 
 This is just a repackaged version of the installer you get from the Metasploit
 download page. This is an all-in-one installer with Metasploit own versions of
-Ruby, Java and PostgreSQL. Remember to add something like:
+Ruby, Java and PostgreSQL. You will need "postgres" user and group before
+running the installer, if you haven't installed SlackBuilds PostgreSQL you
+should run these commands to be compatible:
 
+  # groupadd -g 209 postgres
+  # useradd -u 209 -g 209 -d /var/lib/pgsql postgres
+
+otherwise, you're already setup. Also, remember to add something like:
+
+  # Start Metasploit Framework PostgreSQL
   if [ -x /etc/rc.d/rc.framework-postgres ]; then
     /etc/rc.d/rc.framework-postgres start
   fi
@@ -16,6 +24,7 @@ Ruby, Java and PostgreSQL. Remember to add something like:
 to /etc/rc.d/rc.local to start the shipped PostgreSQL daemon and something
 like:
 
+  # Stop Metasploit Framework PostgreSQL
   if [ -x /etc/rc.d/rc.framework-postgres ]; then
     /etc/rc.d/rc.framework-postgres stop
   fi
@@ -23,10 +32,9 @@ like:
 to /etc/rc.d/rc.local_shutdown to stop the service.
 I've changed the database default listening port to 5433 in order not to
 conflict with any existing PostgreSQL installation, if you want to use another
-port, just export the POSTGRESPORT variable when running the SlackBuild, like
-this:
+port, just export the PG_PORT variable when running the SlackBuild, like this:
 
-  # POSTGRESPORT="5454" ./framework.SalckBuild
+  # PG_PORT="5454" ./framework.SalckBuild
 
 An optional cron script to keep the framework up to date is distributed inside
 the /usr/doc/framework-${VERSION} directory and it's called "msfupdate.sh",

@@ -45,11 +45,29 @@ OUTPUT=${OUTPUT:-/tmp}
 BASEINSTDIR="opt"
 INSTDIR="$BASEINSTDIR/framework-${VERSION}"
 
+# PostgreSQL user and group
+PG_UID=${PG_UID:-209}
+PG_GID=${PG_GID:-209}
+
 # On which port is PostgreSQL listening to?
 # Default is 5432, I've changed it to 5433 to not conflict on any existing
-# PostreSQL installation. Set POSTGRESPORT to any other value if you want to
+# PostreSQL installation. Set PG_PORT to any other value if you want to
 # customize it.
-POSTGRESPORT=${POSTGRESPORT:-5433}
+PG_PORT=${PG_PORT:-5433}
+
+# Bail out if user or group isn't valid on your system
+# For slackbuilds.org, assigned postgres uid/gid are 209/209
+# See http://slackbuilds.org/uid_gid.txt
+# Other popular choice is 26/26
+if ! grep ^postgres: /etc/group 2>&1 > /dev/null; then
+  echo "  You must have a postgres group to run this script."
+  echo "    # groupadd -g $PG_GID postgres"
+  exit 1
+elif ! grep ^postgres: /etc/passwd 2>&1 > /dev/null; then
+  echo "  You must have a postgres user to run this script."
+  echo "    # useradd -u $PG_UID -g $PG_GID -d /var/lib/pgsql postgres"
+  exit 1
+fi
 
 if [ "$ARCH" = "i486" ]; then
   INSTALLERARCH=""
@@ -64,7 +82,7 @@ set -e
 rm -rf $PKG
 mkdir -p $TMP $PKG $OUTPUT
 
-# Install the framework under /opt/framework-${VRESION}
+# Install Metasploit Framework under /opt/framework-${VRESION}
 mkdir -p $PKG/$INSTDIR
 echo "Installing the Metasploit Framework..."
 chown root:root $CWD/framework-$VERSION-linux$INSTALLERARCH-full.run
@@ -72,18 +90,21 @@ chmod 755 $CWD/framework-$VERSION-linux$INSTALLERARCH-full.run
 $CWD/framework-$VERSION-linux$INSTALLERARCH-full.run \
   --mode unattended \
   --unattendedmodeui minimal \
-  --postgres_port $POSTGRESPORT
+  --postgres_port $PG_PORT \
   --prefix $PKG/$INSTDIR
 
-# Stop metasploit framework postgresql
+# Stop Metasploit Framework PostgreSQL
+echo "Stopping Metasploit Framework PostgreSQL..."
 /etc/init.d/framework-postgres stop
 
 # Fix prefix
+echo "Fixing prefix inside files..."
 find $PKG -type f -exec sed -i -e s:$PKG::g \{\} \;
 
 # Fix init script and move it to the right directory
 # This script is not handled by the uninstaller and the user should not call
 # the uninstall script anyway, so no problem if we made it more Slackware-ish
+echo "Fixing Metasploit Framework PostgreSQL init script..."
 sed -i -e "s:$PKG::g" /etc/init.d/framework-postgres
 mkdir -p $PKG/etc/rc.d
 mv /etc/init.d/framework-postgres $PKG/etc/rc.d/rc.framework-postgres.new
@@ -110,6 +131,7 @@ mkdir -p $PKG/install
 cat $CWD/slack-desc > $PKG/install/slack-desc
 cat $CWD/doinst.sh > $PKG/install/doinst.sh
 
+# Do NOT chown -R root:root or it will bork the shipped PostgreSQL
+# installation, the installer should have taken care of permissions
 cd $PKG
-chown -R root:root .
 /sbin/makepkg -l y -c n $OUTPUT/$PRGNAM-$VERSION-$ARCH-$BUILD$TAG.${PKGTYPE:-tgz}
