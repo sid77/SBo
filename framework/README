@@ -7,49 +7,7 @@ language and includes components written in C and assembler.
 
 This is just a repackaged version of the installer you get from the Metasploit
 download page. This is an all-in-one installer with Metasploit own versions of
-Ruby, Java and PostgreSQL. You will need "postgres" user and group before
-running the installer, if you haven't installed SlackBuilds PostgreSQL you
-should run these commands to be compatible:
+Ruby, Java and PostgreSQL.
 
-  # groupadd -g 209 postgres
-  # useradd -u 209 -g 209 -d /var/lib/pgsql postgres
-
-otherwise, you're already setup. Also, remember to add something like:
-
-  # Start Metasploit Framework PostgreSQL
-  if [ -x /etc/rc.d/rc.framework-postgres ]; then
-    /etc/rc.d/rc.framework-postgres start
-  fi
-
-to /etc/rc.d/rc.local to start the shipped PostgreSQL daemon and something
-like:
-
-  # Stop Metasploit Framework PostgreSQL
-  if [ -x /etc/rc.d/rc.framework-postgres ]; then
-    /etc/rc.d/rc.framework-postgres stop
-  fi
-
-to /etc/rc.d/rc.local_shutdown to stop the service.
-I've changed the database default listening port to 5433 in order not to
-conflict with any existing PostgreSQL installation, if you want to use another
-port, just export the PG_PORT variable when running the SlackBuild, like this:
-
-  # PG_PORT="5454" ./framework.SalckBuild
-
-An optional cron script to keep the framework up to date is distributed inside
-the /usr/doc/framework-${VERSION} directory and it's called "msfupdate.sh",
-there also is a logrotate config file called "msfupdate.logrotate" which can
-be useful.
-With older version of the framework, if you used the autoupdate script, future
-package updates could break your current working copy, tainting the .svn
-metadata. To avoid doing so, the tip was to run:
-
-  # removepkg framework
-  # rm -rf /opt/metasploit3
-
-both as root, before proceeding with the package update.
-Starting with Metasploit Framework 3.6.0, the installation directory changed
-again, this time to /opt/framework-${VERSION}. Unless there will be any other
-changes from upstream, this is a great solution as it will enable seamless
-upgrades between svn and packaged versions, just remember to backup PostgreSQL
-data stored inside "/opt/framework-${OLDER_VERSION}/postgresql/data/".
+Take a look at README.SLACKWARE for important build requirements and upgrading
+suggestions.
