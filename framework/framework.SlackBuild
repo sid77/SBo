@@ -120,7 +120,9 @@ echo "Installing links into /usr/bin..."
 mkdir -p $PKG/usr/doc/$PRGNAM-$VERSION
 cp -a $PKG/$INSTDIR/msf3/README $PKG/usr/doc/$PRGNAM-$VERSION
 cat $CWD/msfupdate.sh > $PKG/usr/doc/$PRGNAM-$VERSION/msfupdate.sh
+cat $CWD/msfupdate.logrotate > $PKG/usr/doc/$PRGNAM-$VERSION/msfupdate.logrotate
 cat $CWD/$PRGNAM.SlackBuild > $PKG/usr/doc/$PRGNAM-$VERSION/$PRGNAM.SlackBuild
+cat $CWD/README.SLACKWARE > $PKG/usr/doc/$PRGNAM-$VERSION/README.SLACKWARE
 
 mkdir -p $PKG/install
 cat $CWD/slack-desc > $PKG/install/slack-desc
