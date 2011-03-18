@@ -50,10 +50,8 @@ PG_UID=${PG_UID:-209}
 PG_GID=${PG_GID:-209}
 
 # On which port is PostgreSQL listening to?
-# Default is 5432, I've changed it to 5433 to not conflict on any existing
-# PostreSQL installation. Set PG_PORT to any other value if you want to
-# customize it.
-PG_PORT=${PG_PORT:-5433}
+# Default is 7175, set PG_PORT to any other value if you want to customize it.
+PG_PORT=${PG_PORT:-7175}
 
 # Bail out if user or group isn't valid on your system
 # For slackbuilds.org, assigned postgres uid/gid are 209/209
