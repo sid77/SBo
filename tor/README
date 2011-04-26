@@ -15,4 +15,5 @@ You can pass another user/group to the script; this is however, less safe:
 
 See README.SLACKWARE for how to start tor on boot.
 
-Tor requires libevent.
+Tor requires libevent, while tsocks is an option run-time dependency if you
+want to use the "torify" shell script.
