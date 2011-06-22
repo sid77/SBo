@@ -7,7 +7,7 @@
 # distribution-independent, way, and this script deals with fitting the
 # whole thing into the conventions of the particular system at hand.
 
-# This script is a modified contrb/tor.sh, for use on Slackware.
+# This script is a modified contrib/tor.sh, for use on Slackware.
 
 TORCTL=/usr/bin/torctl
 

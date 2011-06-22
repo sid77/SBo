@@ -24,4 +24,5 @@ The following can be used to start/stop tor automatically:
    /etc/rc.d/rc.tor stop
  fi
 
-Tor requires libevent.
+Tor requires libevent, while tsocks is an optional run-time dependency if you
+want to use the "torify" shell script.
