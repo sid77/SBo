@@ -78,6 +78,11 @@ find . \
  \( -perm 666 -o -perm 664 -o -perm 600 -o -perm 444 -o -perm 440 -o -perm 400 \) \
  -exec chmod 644 {} \;
 
+# Worst file permissions ever seen in a package...
+find . -type d -exec chmod 755 {} \;
+find . -type f -not -path './bin/*' -exec chmod 644 {} \;
+chmod 644 ./bin/wrapper.jar
+
 mkdir -p $PKG/etc/activemq \
   $PKG/usr/share/activemq/data \
   $PKG/var/{run,lib,log}/activemq
