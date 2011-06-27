@@ -97,6 +97,7 @@ chown -R $ACTIVEMQ_USER:$ACTIVEMQ_GROUP $PKG/var/{run,lib,log}/activemq
   for F in `find . -type f`; do echo mv $F $F.new; done
 )
 
+# These links are still needed for activemq to actually work
 ln -sf /etc/activemq $PKG/usr/share/activemq/conf
 ln -sf /var/lib/activemq/webapps $PKG/usr/share/activemq/webapps
 ln -sf /var/log/activemq $PKG/usr/share/activemq/log
@@ -104,6 +105,9 @@ ln -sf /var/log/activemq $PKG/usr/share/activemq/log
 mkdir -p $PKG/usr/doc/$PRGNAM-$VERSION
 cp -a $DOCS $PKG/usr/doc/$PRGNAM-$VERSION
 cat $CWD/$PRGNAM.SlackBuild > $PKG/usr/doc/$PRGNAM-$VERSION/$PRGNAM.SlackBuild
+
+mkdir -p $PKG/etc/rc.d
+cat $CWD/rc.activemq > $PKG/etc/rc.d/rc.activemq.new
 
 mkdir -p $PKG/install
 cat $CWD/slack-desc > $PKG/install/slack-desc
