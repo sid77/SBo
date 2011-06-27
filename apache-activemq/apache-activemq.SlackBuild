@@ -94,7 +94,7 @@ chown -R $ACTIVEMQ_USER:$ACTIVEMQ_GROUP $PKG/var/{run,lib,log}/activemq
 ( cd $PKG/etc/activemq
   sed -i -e 's:data/activemq.log:log/activemq.log:g' *
   sed -i -e 's:data/audit.log:log/audit.log:g' *
-  for F in `find . -type f`; do echo mv $F $F.new; done
+  for F in `find . -type f`; do mv $F $F.new; done
 )
 
 # These links are still needed for activemq to actually work
@@ -105,6 +105,9 @@ ln -sf /var/log/activemq $PKG/usr/share/activemq/log
 mkdir -p $PKG/usr/doc/$PRGNAM-$VERSION
 cp -a $DOCS $PKG/usr/doc/$PRGNAM-$VERSION
 cat $CWD/$PRGNAM.SlackBuild > $PKG/usr/doc/$PRGNAM-$VERSION/$PRGNAM.SlackBuild
+
+mkdir -p $PKG/etc/default
+cat $CWD/default.activemq > $PKG/etc/default/activemq.new
 
 mkdir -p $PKG/etc/rc.d
 cat $CWD/rc.activemq > $PKG/etc/rc.d/rc.activemq.new

@@ -17,6 +17,7 @@ if [ -e etc/rc.d/rc.activemq ]; then
   mv etc/rc.d/rc.activemq.new.incoming etc/rc.d/rc.activemq.new
 fi
 
+config etc/default/activemq.new
 config etc/rc.d/rc.activemq.new
 for F in `find etc/activemq -name '*.new'`; do
   config $F
