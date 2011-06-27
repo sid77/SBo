@@ -92,6 +92,7 @@ rm -rf bin/macosx
 cp -rf bin lib $PKG/usr/share/activemq/
 cp -rf webapps $PKG/var/lib/activemq/
 
+chown -R $ACTIVEMQ_USER:$ACTIVEMQ_GROUP $PKG/usr/share/activemq/data
 chown -R $ACTIVEMQ_USER:$ACTIVEMQ_GROUP $PKG/var/{run,lib,log}/activemq
 
 # LOTS of stuff, some of them are just sample config files though.
