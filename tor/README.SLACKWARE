@@ -1,0 +1,3 @@
+There has been a recent libevent upgrade from 1.4.13 to 2.0.10 in
+SlackBuilds.org 13.37 tree, remember to rebuild Tor when such major upgrades
+happen.
