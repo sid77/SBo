@@ -61,6 +61,9 @@ rm -rf $PRGNAM-$VERSION
 tar xvf $CWD/$PRGNAM-$VERSION.tar.gz
 cd $PRGNAM-$VERSION
 
+# fix install path
+patch -p1 --verbose < $CWD/installpath.diff
+
 chown -R root:root .
 
 find . \
@@ -72,12 +75,17 @@ find . \
 python setup.py build || exit 1
 
 python setup.py install --root=$PKG || exit 1
-# installer is broken :-/
+# installer is totally broken :-/
 # technically, I could just copy over Python2 stuff: I leave both Python2 and
-# Python3 files in order not to modify the header files in
-# /usr/include/python-x.x/CXX
+# Python3 files in order not to modify the header files too
 # - sid77
 cp -av CXX/Python? $PKG/usr/include/python`python -c 'import sys; print sys.version[:3]'`/CXX/
+mkdir -p $PKG/usr/share/CXX/Src
+cp -av Src/Python? $PKG/usr/share/CXX/Src
+( cd $PKG/usr/share/CXX
+  ln -sf Src/Python2
+  ln -sf Src/Python3
+)
 
 find $PKG | xargs file | grep -e "executable" -e "shared object" | grep ELF \
   | cut -f 1 -d : | xargs strip --strip-unneeded 2> /dev/null || true
