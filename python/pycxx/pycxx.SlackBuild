@@ -72,6 +72,12 @@ find . \
 python setup.py build || exit 1
 
 python setup.py install --root=$PKG || exit 1
+# installer is broken :-/
+# technically, I could just copy over Python2 stuff: I leave both Python2 and
+# Python3 files in order not to modify the header files in
+# /usr/include/python-x.x/CXX
+# - sid77
+cp -av CXX/Python? $PKG/usr/include/python`python -c 'import sys; print sys.version[:3]'`/CXX/
 
 find $PKG | xargs file | grep -e "executable" -e "shared object" | grep ELF \
   | cut -f 1 -d : | xargs strip --strip-unneeded 2> /dev/null || true
