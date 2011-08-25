@@ -81,7 +81,8 @@ mkdir -p $PKG/usr/share/CXX
 cp -av Src/* $PKG/usr/share/CXX/
 # fix even more broken include statements
 ( cd $PKG/usr/share/CXX
-  sed -i -e 's:Src/::g' *
+  sed -i -e 's:Src/::g' *.c
+  sed -i -e 's:Src/::g' *.cxx
 )
 
 find $PKG | xargs file | grep -e "executable" -e "shared object" | grep ELF \
