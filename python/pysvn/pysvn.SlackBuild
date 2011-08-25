@@ -46,10 +46,13 @@ DOCS="Docs LICENSE.txt"
 
 if [ "$ARCH" = "i486" ]; then
   SLKCFLAGS="-O2 -march=i486 -mtune=i686"
+  LIBDIRSUFFIX=""
 elif [ "$ARCH" = "i686" ]; then
   SLKCFLAGS="-O2 -march=i686 -mtune=i686"
+  LIBDIRSUFFIX=""
 elif [ "$ARCH" = "x86_64" ]; then
   SLKCFLAGS="-O2 -fPIC"
+  LIBDIRSUFFIX="64"
 fi
 
 set -e
@@ -61,6 +64,9 @@ rm -rf $PRGNAM-$VERSION
 tar xvf $CWD/$PRGNAM-$VERSION.tar.gz
 cd $PRGNAM-$VERSION
 
+# remove unneded imported dependencies
+rm -rf Import/pycxx-6.2.2
+
 chown -R root:root .
 
 find . \
@@ -69,9 +75,14 @@ find . \
  \( -perm 666 -o -perm 664 -o -perm 600 -o -perm 444 -o -perm 440 -o -perm 400 \) \
  -exec chmod 644 {} \;
 
-python setup.py build || exit 1
-
-python setup.py install --root=$PKG || exit 1
+# sigh...
+( cd Source
+  python setup.py configure --pycxx-src-dir="/usr/share/CXX"
+  make
+  mkdir -p $PKG/usr/lib${LIBDIRSUFFIX}/python$(python -c 'import sys; print sys.version[:3]')/site-packages/pysvn
+  cp -a pysvn/__init__.py $PKG/usr/lib${LIBDIRSUFFIX}/python$(python -c 'import sys; print sys.version[:3]')/site-packages/pysvn
+  cp -a pysvn/_pysvn*.so $PKG/usr/lib${LIBDIRSUFFIX}/python$(python -c 'import sys; print sys.version[:3]')/site-packages/pysvn
+)
 
 find $PKG | xargs file | grep -e "executable" -e "shared object" | grep ELF \
   | cut -f 1 -d : | xargs strip --strip-unneeded 2> /dev/null || true
