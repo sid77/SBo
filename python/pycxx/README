@@ -16,4 +16,13 @@ these ways:
  tables with objects and method calls that define your modules and extension
  objects.
 
+The original source will install CXX source code needed to help building
+python/C++ extension under /usr/share/python2.6/CXX which is a standard Debian
+directory. As Slackware does not have /usr/share/python2.6, I patched the
+installer to use /usr/share/CXX in order to follow the style of stock python
+packages like pygobject or pygtk. Be aware, though, that python packages that
+will use PyCXX will probably look for the needed files under the Debian
+standard path! You should investigate if their setup.py accept any switch to
+setup a different search path otherwise you will have to patch them.
+
 This package requires python and pysetuptools.
