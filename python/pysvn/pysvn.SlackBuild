@@ -75,10 +75,15 @@ find . \
  \( -perm 666 -o -perm 664 -o -perm 600 -o -perm 444 -o -perm 440 -o -perm 400 \) \
  -exec chmod 644 {} \;
 
-# sigh...
+# build
+( cd Builder
+  PYTHON='python' \
+  CONFIG_ARGS='--pycxx-src-dir="/usr/share/CXX"' \
+  make -f linux.mak all
+)
+
+# install
 ( cd Source
-  python setup.py configure --pycxx-src-dir="/usr/share/CXX"
-  make
   mkdir -p $PKG/usr/lib${LIBDIRSUFFIX}/python$(python -c 'import sys; print sys.version[:3]')/site-packages/pysvn
   cp -a pysvn/__init__.py $PKG/usr/lib${LIBDIRSUFFIX}/python$(python -c 'import sys; print sys.version[:3]')/site-packages/pysvn
   cp -a pysvn/_pysvn*.so $PKG/usr/lib${LIBDIRSUFFIX}/python$(python -c 'import sys; print sys.version[:3]')/site-packages/pysvn
