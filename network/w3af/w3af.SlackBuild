@@ -45,7 +45,12 @@ mkdir -p $TMP $PKG $OUTPUT
 # Install w3af in /opt
 mkdir -p $PKG/opt
 tar xvf $CWD/${PRGNAM}-${SRCVERSION}.tar.bz2 -C $PKG/opt
-cd $PKG/opt/$PRGNAM
+# Version the installation directory to allow easier upgrades
+( cd $PKG/opt
+  mv $PRGNAM $PRGNAM-$VERSION
+  ln -sf $PRGNAM-$VERSION $PRGNAM
+)
+cd $PKG/opt/$PRGNAM-$VERSION
 chown -R root:root .
 find . \
  \( -perm 777 -o -perm 775 -o -perm 711 -o -perm 555 -o -perm 511 \) \
@@ -54,7 +59,8 @@ find . \
  -exec chmod 644 {} \;
 
 # We can't remove extlib anymore: the autoupdate feature (very similar to
-# Metasploit Framework) will break down as it is subversion based
+# Metasploit Framework own autoupdate feature) will break down as it is
+# subversion based
 #
 ## Remove extlib: users do not need w3af's dependencies sources
 #rm -r extlib
@@ -68,12 +74,15 @@ mkdir -p $PKG/usr/bin
 )
 
 # Every useful doc is included inside the w3af/readme folder, just copy over the
-# GPL and README
+# GPL and README and the cron scripts
 mkdir -p $PKG/usr/doc/$PRGNAM-$VERSION
-( cd $PKG/opt/$PRGNAM/readme/
+( cd $PKG/opt/$PRGNAM-$VERSION/readme/
   cp -a $DOCS $PKG/usr/doc/$PRGNAM-$VERSION
 )
 cat $CWD/$PRGNAM.SlackBuild > $PKG/usr/doc/$PRGNAM-$VERSION/$PRGNAM.SlackBuild
+cat $CWD/w3afupdate.sh > $PKG/usr/doc/$PRGNAM-$VERSION/w3afupdate.sh
+cat $CWD/w3afupdate.logrotate > $PKG/usr/doc/$PRGNAM-$VERSION/w3afupdate.logrotate
+cat $CWD/README.SLACKWARE > $PKG/usr/doc/$PRGNAM-$VERSION/README.SLACKWARE
 
 mkdir -p $PKG/install
 cat $CWD/slack-desc > $PKG/install/slack-desc
