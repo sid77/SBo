@@ -11,3 +11,7 @@ Ruby, Java and PostgreSQL.
 
 Take a look at README.SLACKWARE for important build requirements and upgrading
 suggestions.
+
+This package requires krb5 if you want to use the PostgreSQL support. After
+installing the kerberos libraries, remember to add /usr/kerberos/lib to
+/etc/ld.so.conf and re-run ldconfig.
