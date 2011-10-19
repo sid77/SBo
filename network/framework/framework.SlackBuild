@@ -93,10 +93,6 @@ $CWD/framework-$VERSION-linux$INSTALLERARCH-full.run \
 echo "Stopping Metasploit Framework PostgreSQL..."
 /etc/init.d/framework-postgres stop
 
-# Move install dir
-mkdir -p $PKG/$BASEINSTDIR
-mv /$INSTDIR $PKG/$BASEINSTDIR/
-
 # Fix init script and move it to the right directory
 # This script is not handled by the uninstaller and the user should not call
 # the uninstall script anyway, so no problem if we made it more Slackware-ish
@@ -106,16 +102,36 @@ mv /etc/init.d/framework-postgres $PKG/etc/rc.d/rc.framework-postgres.new
 chown root:root $PKG/etc/rc.d/rc.framework-postgres.new
 chmod 755 $PKG/etc/rc.d/rc.framework-postgres.new
 
-# Install /usr/bin links
+# Move links from /usr/local/bin to /usr/bin
+echo "Moving application links into /usr/bin..."
 mkdir -p $PKG/usr/bin
-echo "Installing links into /usr/bin..."
-( cd $PKG/usr/bin
-  for file in $(ls ../../$INSTDIR/app/msf*); do
-    ln -sf $file $(basename $file)
-  done
-  # also links armitage
-  ln -sf ../../$INSTDIR/app/armitage armitage
+( cd /usr/local/bin
+  mv armitage \
+    msfcli \
+    msfconsole \
+    msfd \
+    msfelfscan \
+    msfencode \
+    msfgui \
+    msfirb \
+    msfmachscan \
+    msfpayload \
+    msfpescan \
+    msfrpc \
+    msfrpcd \
+    msfupdate \
+    msfvenom \
+    $PKG/usr/bin
 )
+
+# Move install dir
+echo "Moving install directory..."
+mkdir -p $PKG/$BASEINSTDIR
+mv /$INSTDIR $PKG/$BASEINSTDIR/
+
+# Patch run.sh on the fly, so it can use SlackBuilds.org krb5
+echo "Patching run.sh to properly load kerberos libraries..."
+sed -i -e 's:#!/bin/sh:#!/bin/sh\n\nexport LD_LIBRARY_PATH="/usr/kerberos/lib":g' $PKG/$INSTDIR/run.sh
 
 # Every useful doc is included inside the framework folder, just copy over the
 # README which contains the important copyright disclaimer and the cron script
