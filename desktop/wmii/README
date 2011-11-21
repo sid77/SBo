@@ -9,5 +9,4 @@ all shipped utilities and libraries), to enforce simplicity and clarity.
 This package requires libixp.
 
 If you plan to use plan9port, python or ruby scripting support you should also
-install required interpreters at run time. The package dmenu could also be
-handy but not strictly required.
+install required interpreters at run time.

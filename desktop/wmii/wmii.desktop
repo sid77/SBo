@@ -2,5 +2,5 @@
 Type=XSession
 Exec=/usr/bin/wmii.xinit
 TryExec=/usr/bin/wmii.xinit
-Name=wmii
+Name=window manager improved 2
 Comment=A small, dynamic window manager for X11.
