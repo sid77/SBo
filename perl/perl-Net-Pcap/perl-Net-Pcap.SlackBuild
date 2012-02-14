@@ -2,7 +2,7 @@
 
 # Slackware build script for perl-Net-Pcap
 
-# Copyright 2009-2010 Marco Bonetti <sid77@slackware.it>
+# Copyright 2009-2012 Marco Bonetti <sid77@slackware.it>
 # All rights reserved.
 #
 # Redistribution and use of this script, with or without modification, is
@@ -23,7 +23,7 @@
 # ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 
 PRGNAM=perl-Net-Pcap
-VERSION=${VERSION:-0.14}
+VERSION=${VERSION:-0.16}
 BUILD=${BUILD:-1}
 TAG=${TAG:-_SBo}
 
